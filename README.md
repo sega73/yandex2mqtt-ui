@@ -245,7 +245,7 @@ After=network.target
 
 [Service]
 ExecStart=/usr/bin/npm start
-WorkingDirectory=/mnt/data/root/yandex2mqtt
+WorkingDirectory=/opt/yandex2mqtt
 StandardOutput=inherit
 StandardError=inherit
 Restart=always
