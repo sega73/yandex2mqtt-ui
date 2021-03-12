@@ -183,7 +183,7 @@ class Device {
         const {id, capabilities, properties} = this.data;
 
         try {
-            const cp = [].concat(capabilities, properties).find(cp => (cp.state.instance === instance))
+            const cp = [].concat(capabilities, properties).find(cp => (cp.state.instance === instance));
             if (cp == undefined) throw new Error(`Can't instance '${instance}' in device '${id}'`);
 
             const actType = String(cp.type).split('.')[2];
