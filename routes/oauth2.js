@@ -47,7 +47,7 @@ server.deserializeClient((id, done) => {
 
 server.grant(oauth2orize.grant.code((client, redirectUri, user, ares, done) => {
     const code = utils.getUid(16);
-    db.authorizationCodes.save(code, client.id, redirectUri, user.id, user.username, (error) => {
+    db.authorizationCodes.save(code, client.id, redirectUri, user.id, user.username, error => {
         if (error) return done(error);
         return done(null, code);
     });
@@ -61,7 +61,7 @@ server.grant(oauth2orize.grant.code((client, redirectUri, user, ares, done) => {
 
 server.grant(oauth2orize.grant.token((client, user, ares, done) => {
     const token = utils.getUid(256);
-    db.accessTokens.save(token, user.id, client.clientId, (error) => {
+    db.accessTokens.save(token, user.id, client.clientId, error => {
         if (error) return done(error);
         return done(null, token);
     });
@@ -81,7 +81,7 @@ server.exchange(oauth2orize.exchange.code((client, code, redirectUri, done) => {
         if (redirectUri !== authCode.redirectUri) return done(null, false);
 
         const token = utils.getUid(256);
-        db.accessTokens.save(token, authCode.userId, authCode.clientId, (error) => {
+        db.accessTokens.save(token, authCode.userId, authCode.clientId, error => {
             if (error) return done(error);
             // Add custom params, e.g. the username
             let params = { username: authCode.userName };
@@ -109,7 +109,7 @@ server.exchange(oauth2orize.exchange.password((client, username, password, scope
             if (password !== user.password) return done(null, false);
             // Everything validated, return the token
             const token = utils.getUid(256);
-            db.accessTokens.save(token, user.id, client.clientId, (error) => {
+            db.accessTokens.save(token, user.id, client.clientId, error => {
                 if (error) return done(error);
                 // Call `done(err, accessToken, [refreshToken], [params])`, see oauth2orize.exchange.code
                 return done(null, token);
@@ -132,7 +132,7 @@ server.exchange(oauth2orize.exchange.clientCredentials((client, scope, done) => 
         // Everything validated, return the token
         const token = utils.getUid(256);
         // Pass in a null for user id since there is no user with this grant type
-        db.accessTokens.save(token, null, client.clientId, (error) => {
+        db.accessTokens.save(token, null, client.clientId, error => {
             if (error) return done(error);
             // Call `done(err, accessToken, [refreshToken], [params])`, see oauth2orize.exchange.code
             return done(null, token);
