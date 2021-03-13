@@ -9,7 +9,6 @@ const app = express();
 const https = require('https');
 /* parsers */
 const cookieParser = require('cookie-parser');
-const bodyParser = require('body-parser');
 /* error handler */
 const errorHandler = require('errorhandler');
 /* seesion and passport */
@@ -26,17 +25,17 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, './views'));
 app.use(express.static('views'));
 app.use(cookieParser());
-app.use(bodyParser.json({
-    extended: false
+app.use(express.json({
+    extended: false,
 }));
-app.use(bodyParser.urlencoded({
-    extended: true
+app.use(express.urlencoded({
+    extended: true,
 }));
 app.use(errorHandler());
 app.use(session({
     secret: 'keyboard cat',
     resave: false,
-    saveUninitialized: false
+    saveUninitialized: false,
 }));
 
 /* passport */
@@ -48,6 +47,7 @@ require('./auth');
 
 /* routers */
 const {site: r_site, oauth2: r_oauth2, user: r_user, client: r_client} = require('./routes');
+
 app.get('/', r_site.index);
 app.get('/login', r_site.loginForm);
 app.post('/login', r_site.login);
@@ -70,7 +70,7 @@ const privateKey = fs.readFileSync(config.https.privateKey, 'utf8');
 const certificate = fs.readFileSync(config.https.certificate, 'utf8');
 const credentials = {
     key: privateKey,
-    cert: certificate
+    cert: certificate,
 };
 const httpsServer = https.createServer(credentials, app);
 httpsServer.listen(config.https.port);
@@ -99,22 +99,16 @@ global.mqttClient = mqtt.connect(`mqtt://${config.mqtt.host}`, {
     port: config.mqtt.port,
     username: config.mqtt.user,
     password: config.mqtt.password
-})
-/* on connect event handler */
-.on('connect', () => {
+}).on('connect', () => { /* on connect event handler */
     mqttClient.subscribe(subscriptions.map(pair => pair.topic));
-})
-/* on offline event handler */
-.on('offline', () => {
+}).on('offline', () => { /* on offline event handler */
     /* */
-})
-/* on get message event handler */
-.on('message', (topic, message) => {
+}).on('message', (topic, message) => { /* on get message event handler */
     const subscription = subscriptions.find(sub => topic.toLowerCase() === sub.topic.toLowerCase());
     if (subscription == undefined) return;
 
     const {deviceId, instance} = subscription;
-    const ldevice = global.devices.find(d => d.data.id == deviceId);  
+    const ldevice = global.devices.find(d => d.data.id == deviceId);
     ldevice.updateState(`${message}`, instance);
 });
 
