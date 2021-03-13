@@ -2,13 +2,17 @@
     "env": {
         "node": true
     },
-    "extends": "airbnb-base",
+    //"extends": "airbnb-base",
     "parserOptions": {
         "ecmaVersion": 2018,
         "sourceType": "module",
         "ecmaFeatures": {
-        "jsx": true,
-        "modules": true
+            "jsx": true,
+            "modules": true
         }
+    },
+    "rules": {
+        "indent": ["error", 4],
+        "arrow-parens": ["error", "as-needed"]
     }
 }
