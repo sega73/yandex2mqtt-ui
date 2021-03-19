@@ -7,7 +7,7 @@ function convertToYandexValue(val, actType) {
             try {
                 const value = parseFloat(val);
                 return isNaN(value) ? 0.0 : value;
-            } catch {
+            } catch(e) {
                 console.error(`Can't parse to float: ${val}`);
                 return 0.0;
             }
