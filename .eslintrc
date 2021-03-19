@@ -12,7 +12,8 @@
         }
     },
     "rules": {
-        "indent": ["error", 4],
+        "no-empty": ["error", {"allowEmptyCatch": true}],
+        "indent": ["error", 4, {"SwitchCase": 1}],
         "arrow-parens": ["error", "as-needed"]
     }
 }
