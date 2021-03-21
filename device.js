@@ -25,7 +25,7 @@ function convertToYandexValue(val, actType) {
 /* Device class defenition */
 class Device {
     constructor(options) {
-        var id = global.devices.length;
+        const id = global.devices.length;
         this.data = {
             id: options.id || String(id),
             name: options.name || 'Без названия',
@@ -41,6 +41,7 @@ class Device {
         }
     }
 
+    /*  Create init state on device object create */
     initState(cp) {
         const {type, parameters} = cp;
         const actType = String(type).split('.')[2];
@@ -77,26 +78,6 @@ class Device {
         }
 
     }
-    
-    getInfo() {
-        const {id, name, description, room, type, capabilities, properties} = this.data;
-        return {id, name, description, room, type, capabilities, properties};
-    }
-
-    /* Find capability by type */
-    findCapability(type) {
-        return this.data.capabilities.find(c => c.type === type);
-    }
-
-    /* Unused for now */
-    findProperty(type) {
-        return this.data.properties.find(p => p.type === type);
-    }
-
-    /* Find topic by instance*/
-    findTopicByInstance(instance) {
-        return this.data.custom_data.mqtt.find(i => i.instance === instance).set;
-    }
 
     /* Get mapped value (if exist) for capability type */
     /**
@@ -117,6 +98,26 @@ class Device {
         return (mappedValue != undefined) ? mappedValue : val;
     }
 
+    /* Find capability by type */
+    findCapability(type) {
+        return this.data.capabilities.find(c => c.type === type);
+    }
+
+    /* Unused for now */
+    findProperty(type) {
+        return this.data.properties.find(p => p.type === type);
+    }
+
+    /* Find 'set' topic by instance*/
+    findTopicByInstance(instance) {
+        return this.data.custom_data.mqtt.find(i => i.instance === instance).set;
+    }
+
+    getInfo() {
+        const {id, name, description, room, type, capabilities, properties} = this.data;
+        return {id, name, description, room, type, capabilities, properties};
+    }
+    
     /* Get only needed for response device info (bun not full device defenition) */
     getState () {
         const {id, capabilities, properties} = this.data;
