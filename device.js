@@ -12,6 +12,7 @@ function convertToYandexValue(val, actType) {
                 return 0.0;
             }
         }
+        case 'toggle':
         case 'on_off': {
             if (val == undefined) return false;
             if (['true', 'on', '1'].indexOf(String(val).toLowerCase()) != -1) return true;
