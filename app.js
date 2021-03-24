@@ -110,6 +110,35 @@ global.mqttClient = mqtt.connect(`mqtt://${config.mqtt.host}`, {
     const {deviceId, instance} = subscription;
     const ldevice = global.devices.find(d => d.data.id == deviceId);
     ldevice.updateState(`${message}`, instance);
+
+    /* */
+    const noticeRequest = https.request({
+        hostname: 'https://dialogs.yandex.net/api/v1/skills/6bc30a74-a505-4420-b274-f00da95e5a31/callback/state',
+        port: 443,
+        path: '/',
+        method: 'POST',
+        headers: {
+            'Authorization': 'Py9xaYZMeXNAizdjA4eWZ5RhYKQd6AtTSn3FXsmiUU9aHFuz9Q0Z925K9OglDjwBw42h2SiPl71Cyg8kTHIdTyV7yO5btnSoFwmu8wBdCfSh7DXOJ9U2hkRuEtyk47nOdOqzB98PxtWDoaENRFL5yH6w7YZSDpQnM7XN9op1A3Zg9U4mVBFL4SGWZNSSoHAi0CcV36H6QgRpUFZ2bwsGsZFWrHtpsR1J28lFJ8mIhAjaxo3WFj7o9c7MCer9XBUe',
+            'Content-Type': 'application/json'
+        }
+    }, res => {
+
+    });
+    const st = ldevice.getState();
+    noticeRequest.write(JSON.stringify({
+        ts: Math.floor(Date.now() / 1000),
+        payload: {
+            user_id: "1",
+            devices: [{
+                id: deviceId,
+                capabilities: st.capabilities,
+                properties: st.properties
+            }]
+        }
+    }));
+    noticeRequest.end();
+    /* */
+
 });
 
 module.exports = app;
