@@ -127,7 +127,6 @@ class Device {
 
     /* Get only needed for response device info (bun not full device defenition) */
     getState () {
-        console.dir(this.data, {depth: 10});
         const {id, capabilities, properties} = this.data;
         const device = {
             id,
