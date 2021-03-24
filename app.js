@@ -115,10 +115,10 @@ global.mqttClient = mqtt.connect(`mqtt://${config.mqtt.host}`, {
     const noticeRequest = https.request({
         hostname: 'dialogs.yandex.net',
         port: 443,
-        path: '/api/v1/skills/6bc30a74-a505-4420-b274-f00da95e5a31/callback/state',
+        path: `/api/v1/skills/${config.yandex.skillId}/callback/state`,
         method: 'POST',
         headers: {
-            'Authorization': 'Py9xaYZMeXNAizdjA4eWZ5RhYKQd6AtTSn3FXsmiUU9aHFuz9Q0Z925K9OglDjwBw42h2SiPl71Cyg8kTHIdTyV7yO5btnSoFwmu8wBdCfSh7DXOJ9U2hkRuEtyk47nOdOqzB98PxtWDoaENRFL5yH6w7YZSDpQnM7XN9op1A3Zg9U4mVBFL4SGWZNSSoHAi0CcV36H6QgRpUFZ2bwsGsZFWrHtpsR1J28lFJ8mIhAjaxo3WFj7o9c7MCer9XBUe',
+            'Authorization': 'AQAAAAAPv-V2AAT7o_ps6gEtgkNNjlE2ENZt96w',
             'Content-Type': 'application/json'
         }
     }, res => {
