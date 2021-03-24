@@ -59,6 +59,12 @@ class Device {
                     value: false
                 }
             }
+            case 'toggle': {
+                return {
+                    instance: parameters.instance,
+                    value: false
+                }
+            }
             case 'range': {
                 return {
                     instance: parameters.instance,
@@ -117,7 +123,7 @@ class Device {
         const {id, name, description, room, type, capabilities, properties} = this.data;
         return {id, name, description, room, type, capabilities, properties};
     }
-    
+
     /* Get only needed for response device info (bun not full device defenition) */
     getState () {
         const {id, capabilities, properties} = this.data;
