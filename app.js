@@ -112,14 +112,15 @@ global.mqttClient = mqtt.connect(`mqtt://${config.mqtt.host}`, {
     ldevice.updateState(`${message}`, instance);
 
     /* */
-    if ((yc = config.yandex) != undefined) {
+    if (config.yandex != undefined) {
+        const {skillId, token} = config.yandex;
         const noticeRequest = https.request({
             hostname: 'dialogs.yandex.net',
             port: 443,
-            path: `/api/v1/skills/${yc.skillId}/callback/state`,
+            path: `/api/v1/skills/${skillId}/callback/state`,
             method: 'POST',
             headers: {
-                'Authorization': yc.token,
+                'Authorization': token,
                 'Content-Type': 'application/json'
             }
         }, res => {
