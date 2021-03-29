@@ -94,24 +94,6 @@ global.devices.forEach(device => {
     });
 });
 
-/* */
-var noticeRequest;
-const yc = config.yandex;
-if (yc != undefined) {
-    noticeRequest = https.request({
-        hostname: 'dialogs.yandex.net',
-        port: 443,
-        path: `/api/v1/skills/${yc.skillId}/callback/state`,
-        method: 'POST',
-        headers: {
-            'Authorization': yc.token,
-            'Content-Type': 'application/json'
-        }
-    }, res => {
-
-    });
-};
-
 /* Create MQTT client (variable) in global */
 global.mqttClient = mqtt.connect(`mqtt://${config.mqtt.host}`, {
     port: config.mqtt.port,
@@ -130,33 +112,33 @@ global.mqttClient = mqtt.connect(`mqtt://${config.mqtt.host}`, {
     ldevice.updateState(`${message}`, instance);
 
     /* */
-    // if ((yc = config.yandex) != undefined) {
-    //     const noticeRequest = https.request({
-    //         hostname: 'dialogs.yandex.net',
-    //         port: 443,
-    //         path: `/api/v1/skills/${yc.skillId}/callback/state`,
-    //         method: 'POST',
-    //         headers: {
-    //             'Authorization': yc.token,
-    //             'Content-Type': 'application/json'
-    //         }
-    //     }, res => {
+    if ((yc = config.yandex) != undefined) {
+        const noticeRequest = https.request({
+            hostname: 'dialogs.yandex.net',
+            port: 443,
+            path: `/api/v1/skills/${yc.skillId}/callback/state`,
+            method: 'POST',
+            headers: {
+                'Authorization': yc.token,
+                'Content-Type': 'application/json'
+            }
+        }, res => {
 
-    //     });
-    const st = ldevice.getState();
-    noticeRequest.write(JSON.stringify({
-        ts: Math.floor(Date.now() / 1000),
-        payload: {
-            user_id: "1",
-            devices: [{
-                id: deviceId,
-                capabilities: st.capabilities,
-                properties: st.properties
-            }]
-        }
-    }));
-    noticeRequest.end();
-    // }
+        });
+        const st = ldevice.getState();
+        noticeRequest.write(JSON.stringify({
+            ts: Math.floor(Date.now() / 1000),
+            payload: {
+                user_id: "1",
+                devices: [{
+                    id: deviceId,
+                    capabilities: st.capabilities,
+                    properties: st.properties
+                }]
+            }
+        }));
+        noticeRequest.end();
+    }
     /* */
 
 });
