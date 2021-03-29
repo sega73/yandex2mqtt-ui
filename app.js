@@ -124,7 +124,9 @@ global.mqttClient = mqtt.connect(`mqtt://${config.mqtt.host}`, {
                 'Content-Type': 'application/json'
             }
         }, res => {
-            console.log(res);
+            res.on('data', d => {
+                console.log(d);
+            });
         });
         const st = ldevice.getState();
         noticeRequest.write(JSON.stringify({
