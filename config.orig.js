@@ -1,4 +1,9 @@
 module.exports = {
+    yandex: {
+        skillId: 'skill_id',
+        token: 'token'
+    },
+
     mqtt: {
         host: 'localhost',
         port: 1883,
