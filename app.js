@@ -96,7 +96,8 @@ global.devices.forEach(device => {
 
 /* */
 var noticeRequest;
-if ((yc = config.yandex) != undefined) {
+const yc = config.yandex;
+if (yc != undefined) {
     noticeRequest = https.request({
         hostname: 'dialogs.yandex.net',
         port: 443,
