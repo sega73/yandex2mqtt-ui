@@ -42,7 +42,7 @@ class Device {
         }
     }
 
-    /*  Create init state on device object create */
+    /*  Create init state (for capabilities and properties) on device object create */
     initState(cp) {
         const {type, parameters} = cp;
         const actType = String(type).split('.')[2];
@@ -60,10 +60,24 @@ class Device {
                     value: false
                 }
             }
-            case 'toggle': {
+            // case 'color_setting': {
+            //     return {
+            //         instance: (p => {
+            //             if (p.temperature_k != undefined) return 'temperature_k';
+            //             if (p.color_model != undefined) return p.color_model;
+            //             else return undefined;
+            //         })(parameters),
+            //         value: (p => {
+            //             if (p.temperature_k != undefined) return p.temperature_k.min || 4500;
+            //             if (p.color_model == 'rgb') return 16777215;
+            //             if (p.color_model == 'hsv') return {h: 0, s: 0, v: 100};
+            //         })(parameters)
+            //     }
+            // }
+            case 'mode': {
                 return {
                     instance: parameters.instance,
-                    value: false
+                    value: parameters.modes[0].value
                 }
             }
             case 'range': {
@@ -72,10 +86,10 @@ class Device {
                     value: parameters.range.min
                 }
             }
-            case 'mode': {
+            case 'toggle': {
                 return {
                     instance: parameters.instance,
-                    value: parameters.modes[0].value
+                    value: false
                 }
             }
             default: {
@@ -86,6 +100,26 @@ class Device {
 
     }
 
+    /* Find capability by type (and instance) */
+    findCapability(type, instance) {
+        const {capabilities} = this.data;
+        if (instance != undefined) {
+            return capabilities.find(c => c.type === type && c.state.instance === instance);
+        } else {
+            return capabilities.find(c => c.type === type);
+        }
+    }
+
+    /* Unused for now */
+    // findProperty(type) {
+    //     return this.data.properties.find(p => p.type === type);
+    // }
+
+    /* Find 'set' topic by instance*/
+    findTopicByInstance(instance) {
+        return this.data.custom_data.mqtt.find(i => i.instance === instance).set;
+    }
+    
     /* Get mapped value (if exist) for capability type */
     /**
      * 
@@ -103,21 +137,6 @@ class Device {
         
         const mappedValue = to[from.indexOf(val)];
         return (mappedValue != undefined) ? mappedValue : val;
-    }
-
-    /* Find capability by type */
-    findCapability(type) {
-        return this.data.capabilities.find(c => c.type === type);
-    }
-
-    /* Unused for now */
-    findProperty(type) {
-        return this.data.properties.find(p => p.type === type);
-    }
-
-    /* Find 'set' topic by instance*/
-    findTopicByInstance(instance) {
-        return this.data.custom_data.mqtt.find(i => i.instance === instance).set;
     }
 
     getInfo() {
@@ -160,7 +179,7 @@ class Device {
         let message;
         let topic;
         try {
-            const capability = this.findCapability(type);
+            const capability = this.findCapability(type, instance);
             if (capability == undefined) throw new Error(`Can't find capability '${type}' in device '${id}'`);
             capability.state.value = value;
             topic = this.findTopicByInstance(instance);
