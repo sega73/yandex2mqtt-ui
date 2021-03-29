@@ -94,6 +94,23 @@ global.devices.forEach(device => {
     });
 });
 
+/* */
+var noticeRequest;
+if ((yc = config.yandex) != undefined) {
+    noticeRequest = https.request({
+        hostname: 'dialogs.yandex.net',
+        port: 443,
+        path: `/api/v1/skills/${yc.skillId}/callback/state`,
+        method: 'POST',
+        headers: {
+            'Authorization': yc.token,
+            'Content-Type': 'application/json'
+        }
+    }, res => {
+
+    });
+};
+
 /* Create MQTT client (variable) in global */
 global.mqttClient = mqtt.connect(`mqtt://${config.mqtt.host}`, {
     port: config.mqtt.port,
@@ -112,18 +129,19 @@ global.mqttClient = mqtt.connect(`mqtt://${config.mqtt.host}`, {
     ldevice.updateState(`${message}`, instance);
 
     /* */
-    const noticeRequest = https.request({
-        hostname: 'dialogs.yandex.net',
-        port: 443,
-        path: `/api/v1/skills/${config.yandex.skillId}/callback/state`,
-        method: 'POST',
-        headers: {
-            'Authorization': 'AQAAAAAPv-V2AAT7o_ps6gEtgkNNjlE2ENZt96w',
-            'Content-Type': 'application/json'
-        }
-    }, res => {
+    // if ((yc = config.yandex) != undefined) {
+    //     const noticeRequest = https.request({
+    //         hostname: 'dialogs.yandex.net',
+    //         port: 443,
+    //         path: `/api/v1/skills/${yc.skillId}/callback/state`,
+    //         method: 'POST',
+    //         headers: {
+    //             'Authorization': yc.token,
+    //             'Content-Type': 'application/json'
+    //         }
+    //     }, res => {
 
-    });
+    //     });
     const st = ldevice.getState();
     noticeRequest.write(JSON.stringify({
         ts: Math.floor(Date.now() / 1000),
@@ -137,6 +155,7 @@ global.mqttClient = mqtt.connect(`mqtt://${config.mqtt.host}`, {
         }
     }));
     noticeRequest.end();
+    // }
     /* */
 
 });
