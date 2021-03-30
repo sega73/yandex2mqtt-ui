@@ -63,20 +63,6 @@ class Device {
                     value: false
                 }
             }
-            // case 'color_setting': {
-            //     return {
-            //         instance: (p => {
-            //             if (p.temperature_k != undefined) return 'temperature_k';
-            //             if (p.color_model != undefined) return p.color_model;
-            //             else return undefined;
-            //         })(parameters),
-            //         value: (p => {
-            //             if (p.temperature_k != undefined) return p.temperature_k.min || 4500;
-            //             if (p.color_model == 'rgb') return 16777215;
-            //             if (p.color_model == 'hsv') return {h: 0, s: 0, v: 100};
-            //         })(parameters)
-            //     }
-            // }
             case 'mode': {
                 return {
                     instance: parameters.instance,
