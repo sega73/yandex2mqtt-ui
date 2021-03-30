@@ -22,9 +22,9 @@ module.exports.devices = [
     (req, res) => {
         const [reqId, authToken] = [req.get('X-Request-Id'), req.get('Authorization')];
 
-        const ltoken = global.authl.findOne({'token': authToken});
-        const {userId} = ltoken;
-        console.log(userId);
+        //const ltoken = global.authl.findOne({'token': authToken});
+        //const {userId} = ltoken;
+        console.log(authToken);
 
         const r = {
             request_id: reqId,
