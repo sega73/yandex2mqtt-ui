@@ -22,23 +22,28 @@ module.exports.devices = [
     (req, res) => {
         const [reqId, authToken] = [req.get('X-Request-Id'), String(req.get('Authorization')).split(' ')[1]];
 
-        //const ltoken = global.authl.findOne({'token': authToken});
-        //const {userId} = ltoken;
-        console.log(authToken);
+        try {
+            const ltoken = global.authl.findOne({'token': authToken});
+            const {userId} = ltoken;
+            console.log(userId);
 
-        const r = {
-            request_id: reqId,
-            payload: {
-                user_id: "1",
-                devices: []
-            }
-        };
+            const r = {
+                request_id: reqId,
+                payload: {
+                    user_id: "1",
+                    devices: []
+                }
+            };
 
-        for (const d of global.devices) {
-            r.payload.devices.push(d.getInfo());
-        };
-        
-        res.status(200).send(r);
+            for (const d of global.devices) {
+                r.payload.devices.push(d.getInfo());
+            };
+            
+            res.status(200).send(r);
+        } catch (e) {
+            console.error(e);
+            res.status(404).send(undefined);
+        }
     }
 ];
 
