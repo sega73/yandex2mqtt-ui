@@ -34,6 +34,7 @@ class Device {
             room: options.room || '',
             type: options.type || 'devices.types.light',
             custom_data: {
+                allowedUsers: options.allowedUsers || [1],
                 mqtt: options.mqtt || [],
                 valueMapping: options.valueMapping || [],
             },
