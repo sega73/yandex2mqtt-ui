@@ -35,6 +35,7 @@ module.exports.devices = [
             };
 
             for (const d of global.devices) {
+                console.log(d);
                 const {allowedUsers} = d.custom_data;
                 if (Array.isArray(allowedUsers) && allowedUsers.indexOf(userId)) {
                     console.log(d.getInfo());
