@@ -20,7 +20,7 @@ module.exports.ping = [
 module.exports.devices = [
     passport.authenticate('bearer', {session: true}),
     (req, res) => {
-        const [reqId, authToken] = [req.get('X-Request-Id'), req.get('Authorization')];
+        const [reqId, authToken] = [req.get('X-Request-Id'), String(req.get('Authorization')).split(' ')[1]];
 
         //const ltoken = global.authl.findOne({'token': authToken});
         //const {userId} = ltoken;
