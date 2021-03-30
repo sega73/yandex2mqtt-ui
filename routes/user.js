@@ -25,18 +25,20 @@ module.exports.devices = [
         try {
             const ltoken = global.authl.findOne({'token': authToken});
             const {userId} = ltoken;
-            console.log(userId);
 
             const r = {
                 request_id: reqId,
                 payload: {
-                    user_id: "1",
+                    user_id: userId,
                     devices: []
                 }
             };
 
             for (const d of global.devices) {
-                r.payload.devices.push(d.getInfo());
+                if (Array.isArray(d.users) && d.users.indexOf(userId)) {
+                    console.log(d.getInfo());
+                    r.payload.devices.push(d.getInfo());
+                }
             };
             
             res.status(200).send(r);
