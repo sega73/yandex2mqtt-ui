@@ -47,8 +47,8 @@ module.exports = {
             mqtt: [
                 {
                     instance: 'on',
-                    set: '/yandex/controls/light_HaW_002/state/on',
-                    state: '/yandex/controls/light_HaW_002/state',
+                    set: '/yandex/controls/light_HaW_002/on',
+                    state: '/yandex/controls/light_HaW_002/on/state',
                 },
             ],
             capabilities: [
@@ -68,8 +68,8 @@ module.exports = {
             mqtt: [
                 {
                     instance: 'on',
-                    set: '/yandex/controls/light_LvR_003/state/on',
-                    state: '/yandex/controls/light_LvR_003/state',
+                    set: '/yandex/controls/light_LvR_003/on',
+                    state: '/yandex/controls/light_LvR_003/on/state',
                 },
             ],
             valueMapping: [
@@ -131,8 +131,8 @@ module.exports = {
             mqtt: [
                 {
                     instance: 'on',
-                    set: '/yandex/controls/socket_LvR_002/state/on',
-                    state: '/yandex/controls/socket_LvR_002/state/on',
+                    set: '/yandex/controls/socket_LvR_002/on',
+                    state: '/yandex/controls/socket_LvR_002/on/state',
                 },
                 {
                     instance: 'power',
