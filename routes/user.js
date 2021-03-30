@@ -20,11 +20,10 @@ module.exports.ping = [
 module.exports.devices = [
     passport.authenticate('bearer', {session: true}),
     (req, res) => {
-        const [reqId, authToken] = [req.get('X-Request-Id'), String(req.get('Authorization')).split(' ')[1]];
+        const [reqId, authToken] = [req.get('X-Request-Id'), req.get('Authorization').split(' ')[1]];
 
         try {
-            const ltoken = global.authl.findOne({'token': authToken});
-            const {userId} = ltoken;
+            const {userId} = global.authl.findOne({'token': authToken});
 
             const r = {
                 request_id: reqId,
@@ -34,12 +33,8 @@ module.exports.devices = [
                 }
             };
 
-            for (const d of global.devices) {
-                const {allowedUsers} = d.meta;
-                if (Array.isArray(allowedUsers) && allowedUsers.indexOf(userId) > -1) {
-                    console.log(d.getInfo());
-                    r.payload.devices.push(d.getInfo());
-                }
+            for (const d of global.devices.filter(d => Array.isArray(d.meta.allowedUsers) && d.meta.allowedUsers.indexOf(userId) > -1)) {
+                r.payload.devices.push(d.getInfo());
             };
             
             res.status(200).send(r);
