@@ -35,7 +35,7 @@ module.exports.devices = [
             };
 
             for (const d of global.devices) {
-                if (Array.isArray(d.users) && d.users.indexOf(userId)) {
+                if (Array.isArray(d.allowedUsers) && d.allowedUsers.indexOf(userId)) {
                     console.log(d.getInfo());
                     r.payload.devices.push(d.getInfo());
                 }
