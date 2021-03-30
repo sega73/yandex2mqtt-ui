@@ -112,34 +112,6 @@ global.mqttClient = mqtt.connect(`mqtt://${config.mqtt.host}`, {
     ldevice.updateState(`${message}`, instance);
 
     /* */
-    // if (config.yandex != undefined) {
-    //     const {skillId, token} = config.yandex;
-    //     const noticeRequest = https.request({
-    //         hostname: 'dialogs.yandex.net',
-    //         port: 443,
-    //         path: `/api/v1/skills/${skillId}/callback/state`,
-    //         method: 'POST',
-    //         headers: {
-    //             'Authorization': token,
-    //             'Content-Type': 'application/json'
-    //         }
-    //     });
-    //     const st = ldevice.getState();
-    //     noticeRequest.write(JSON.stringify({
-    //         ts: Math.floor(Date.now() / 1000),
-    //         payload: {
-    //             user_id: "1",
-    //             devices: [{
-    //                 id: deviceId,
-    //                 capabilities: st.capabilities,
-    //                 properties: st.properties
-    //             }]
-    //         }
-    //     }));
-    //     noticeRequest.end();
-    // }
-    /* */
-
 });
 
 module.exports = app;
