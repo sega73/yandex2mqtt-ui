@@ -113,10 +113,15 @@ class Device {
         }
     }
 
-    /* Unused for now */
-    // findProperty(type) {
-    //     return this.data.properties.find(p => p.type === type);
-    // }
+    /* Find property by type (and instance) */
+    findProperty(type, instance) {
+        const {properties} = this.data;
+        if (instance != undefined) {
+            return properties.find(p => p.type === type && p.state.instance === instance);
+        } else {
+            return properties.find(p => p.type === type);
+        }
+    }
 
     /* Find 'set' topic by instance*/
     findTopicByInstance(instance) {
