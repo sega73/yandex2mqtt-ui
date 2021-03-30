@@ -43,6 +43,7 @@ module.exports = {
             name: 'Свет в коридоре',
             room: 'Коридор',
             type: 'devices.types.light',
+            allowedUsers: ['2'],
             mqtt: [
                 {
                     instance: 'on',
@@ -63,6 +64,7 @@ module.exports = {
             name: 'Основной свет',
             room: 'Гостиная',
             type: 'devices.types.light',
+            allowedUsers: ['2'],
             mqtt: [
                 {
                     instance: 'on',
@@ -89,6 +91,7 @@ module.exports = {
             name: 'В гостиной',
             room: 'Гостиная',
             type: 'devices.types.sensor',
+            allowedUsers: ['2'],
             mqtt: [
                 {
                     instance: 'temperature',
@@ -124,6 +127,7 @@ module.exports = {
             name: 'Розетка для цветка',
             room: 'Гостиная',
             type: 'devices.types.socket',
+            allowedUsers: ['2'],
             mqtt: [
                 {
                     instance: 'on',
