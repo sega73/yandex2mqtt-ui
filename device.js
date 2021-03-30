@@ -34,13 +34,15 @@ class Device {
             room: options.room || '',
             type: options.type || 'devices.types.light',
             custom_data: {
-                allowedUsers: options.allowedUsers || [1],
                 mqtt: options.mqtt || [],
                 valueMapping: options.valueMapping || [],
             },
             capabilities: (options.capabilities || []).map(c => Object.assign({}, c, {state: (c.state == undefined) ? this.initState(c) : c.state})),
-            properties: (options.properties || []).map(p => Object.assign({}, p, {state: (p.state == undefined) ? this.initState(p) : p.state}))
-        }
+            properties: (options.properties || []).map(p => Object.assign({}, p, {state: (p.state == undefined) ? this.initState(p) : p.state})),
+        };
+        this.meta = {
+            allowedUsers: options.allowedUsers || [1],
+        };
     }
 
     /*  Create init state (for capabilities and properties) on device object create */
