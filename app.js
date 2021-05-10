@@ -125,6 +125,7 @@ global.mqttClient = mqtt.connect(`mqtt://${config.mqtt.host}`, {
         console.log(`statusCode: ${res.statusCode}`)
         
         res.on('data', d => {
+            console.log(d);
             process.stdout.write(d);
         });
     });
@@ -133,7 +134,7 @@ global.mqttClient = mqtt.connect(`mqtt://${config.mqtt.host}`, {
         console.error(error)
     });
     
-    req.write(data);
+    // req.write(data);
     req.end();
 
 });
