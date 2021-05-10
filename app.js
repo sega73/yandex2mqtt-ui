@@ -112,6 +112,30 @@ global.mqttClient = mqtt.connect(`mqtt://${config.mqtt.host}`, {
     ldevice.updateState(`${message}`, instance);
 
     /* */
+    const req = https.request({
+        hostname: 'dialogs.yandex.net',
+        port: 443,
+        path: `/api/v1/skills/${config.notification.skill_id}/callback/state`,
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': config.notification.oauth_token
+        }
+    }, res => {
+        console.log(`statusCode: ${res.statusCode}`)
+        
+        res.on('data', d => {
+            process.stdout.write(d);
+        });
+    });
+        
+    req.on('error', error => {
+        console.error(error)
+    });
+    
+    req.write(data);
+    req.end();
+
 });
 
 module.exports = app;
