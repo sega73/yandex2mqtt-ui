@@ -118,8 +118,8 @@ global.mqttClient = mqtt.connect(`mqtt://${config.mqtt.host}`, {
         path: `/api/v1/skills/${config.notification.skill_id}/callback/state`,
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': config.notification.oauth_token
+            'Content-Type': `application/json`,
+            'Authorization': `OAuth ${config.notification.oauth_token}`
         }
     }, res => {
         console.log(`statusCode: ${res.statusCode}`)
