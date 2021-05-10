@@ -134,13 +134,13 @@ global.mqttClient = mqtt.connect(`mqtt://${config.mqtt.host}`, {
         console.error(error)
     });
     
-    req.write({
+    req.write(JSON.stringify({
         "ts": Math.floor(Date.now() / 1000),
         "payload": {
             "user_id": '2',
             "devices": []
         }
-    });
+    }));
     req.end();
 
 });
