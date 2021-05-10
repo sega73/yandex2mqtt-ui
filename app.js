@@ -137,7 +137,6 @@ global.mqttClient = mqtt.connect(`mqtt://${config.mqtt.host}`, {
     req.write(JSON.stringify({
         "ts": Math.floor(Date.now() / 1000),
         "payload": {
-            "user_id": '2',
             "devices": [ldevice.getState()],
         }
     }));
