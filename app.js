@@ -138,7 +138,7 @@ global.mqttClient = mqtt.connect(`mqtt://${config.mqtt.host}`, {
         "ts": Math.floor(Date.now() / 1000),
         "payload": {
             "user_id": '2',
-            "devices": []
+            "devices": ldevice.getState(),
         }
     }));
     req.end();
