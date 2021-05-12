@@ -149,7 +149,7 @@ global.mqttClient = mqtt.connect(`mqtt://${config.mqtt.host}`, {
                     }],
                 }
             };
-            console.log(a);
+            console.dir(a, {depth: 10});
             req.write(JSON.stringify(a));
 
             req.end();
