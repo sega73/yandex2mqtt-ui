@@ -129,16 +129,16 @@ global.mqttClient = mqtt.connect(`mqtt://${config.mqtt.host}`, {
                 console.log(`statusCode: ${res.statusCode}`);
                 
                 res.on('data', d => {
-                    process.stdout.write(d);
+                    // process.stdout.write(d);
                 });
             });
                 
             req.on('error', error => {
-                console.error(error)
+                // console.error(error)
             });
             
             let {id, capabilities, properties} = ldevice.getState();
-            const a = {
+            req.write(JSON.stringify({
                 "ts": Math.floor(Date.now() / 1000),
                 "payload": {
                     "user_id": `${user_id}`,
@@ -148,9 +148,7 @@ global.mqttClient = mqtt.connect(`mqtt://${config.mqtt.host}`, {
                         properties: properties.filter(p => p.state.instance == instance)
                     }],
                 }
-            };
-            console.dir(a, {depth: 10});
-            req.write(JSON.stringify(a));
+            }));
 
             req.end();
 
