@@ -112,7 +112,7 @@ global.mqttClient = mqtt.connect(`mqtt://${config.mqtt.host}`, {
     ldevice.updateState(`${message}`, instance);
 
     /* */
-    Promise.all(config.notification.map(el => {
+    Promise.all([].concat(config.notification).map(el => {
         const [skill_id, oauth_token, user_id] = el;
 
         return new Promise((resolve, reject) => {
@@ -147,7 +147,7 @@ global.mqttClient = mqtt.connect(`mqtt://${config.mqtt.host}`, {
             }));
 
             req.end();
-            
+
             resolve(true);
         });
     }));
