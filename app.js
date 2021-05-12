@@ -113,10 +113,10 @@ global.mqttClient = mqtt.connect(`mqtt://${config.mqtt.host}`, {
 
     /* */
     Promise.all(config.notification.map(el => {
-        const [skill_id, oauth_token, user_id] = el;
+        let {skill_id, oauth_token, user_id} = el;
 
         return new Promise((resolve, reject) => {
-            const req = https.request({
+            let req = https.request({
                 hostname: 'dialogs.yandex.net',
                 port: 443,
                 path: `/api/v1/skills/${skill_id}/callback/state`,
@@ -129,7 +129,6 @@ global.mqttClient = mqtt.connect(`mqtt://${config.mqtt.host}`, {
                 console.log(`statusCode: ${res.statusCode}`);
                 
                 res.on('data', d => {
-                    console.log(d);
                     process.stdout.write(d);
                 });
             });
@@ -138,13 +137,20 @@ global.mqttClient = mqtt.connect(`mqtt://${config.mqtt.host}`, {
                 console.error(error)
             });
             
-            req.write(JSON.stringify({
+            let {id, capabilities, properties} = ldevice.getState();
+            const a = {
                 "ts": Math.floor(Date.now() / 1000),
                 "payload": {
                     "user_id": `${user_id}`,
-                    "devices": [ldevice.getState()],
+                    "devices": [{
+                        id,
+                        capabilities: capabilities.filter(c => c.state.instance == instance),
+                        properties: properties.filter(p => p.state.instance == instance)
+                    }],
                 }
-            }));
+            };
+            console.log(a);
+            req.write(JSON.stringify(a));
 
             req.end();
 
