@@ -112,36 +112,47 @@ global.mqttClient = mqtt.connect(`mqtt://${config.mqtt.host}`, {
     ldevice.updateState(`${message}`, instance);
 
     /* */
-    const req = https.request({
-        hostname: 'dialogs.yandex.net',
-        port: 443,
-        path: `/api/v1/skills/${config.notification.skill_id}/callback/state`,
-        method: 'POST',
-        headers: {
-            'Content-Type': `application/json`,
-            'Authorization': `OAuth ${config.notification.oauth_token}`
-        }
-    }, res => {
-        console.log(`statusCode: ${res.statusCode}`)
-        
-        res.on('data', d => {
-            console.log(d);
-            process.stdout.write(d);
+    Promise.all(config.notification.map(el => {
+        const [skill_id, oauth_token, user_id] = el;
+
+        return new Promise((resolve, reject) => {
+            const req = https.request({
+                hostname: 'dialogs.yandex.net',
+                port: 443,
+                path: `/api/v1/skills/${skill_id}/callback/state`,
+                method: 'POST',
+                headers: {
+                    'Content-Type': `application/json`,
+                    'Authorization': `OAuth ${oauth_token}`
+                }
+            }, res => {
+                console.log(`statusCode: ${res.statusCode}`);
+                
+                res.on('data', d => {
+                    console.log(d);
+                    process.stdout.write(d);
+                });
+            });
+                
+            req.on('error', error => {
+                console.error(error)
+            });
+            
+            req.write(JSON.stringify({
+                "ts": Math.floor(Date.now() / 1000),
+                "payload": {
+                    "user_id": `${user_id}`,
+                    "devices": [ldevice.getState()],
+                }
+            }));
+
+            req.end();
+            
+            resolve(true);
         });
-    });
-        
-    req.on('error', error => {
-        console.error(error)
-    });
-    
-    req.write(JSON.stringify({
-        "ts": Math.floor(Date.now() / 1000),
-        "payload": {
-            "user_id": '1',
-            "devices": [ldevice.getState()],
-        }
     }));
-    req.end();
+
+    /* */
 
 });
 
