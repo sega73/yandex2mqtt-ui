@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 /* */
 const {createLogger, format, transports} = require('winston');
-const {combine, timestamp, label, printf} = format;
+const {combine, timestamp, printf} = format;
 /* express and https */
 const ejs = require('ejs');
 const express = require('express');
@@ -29,7 +29,7 @@ global.logger = createLogger({
     format: combine(
         label(),
         timestamp(),
-        printf(({level, message, timestamp, label}) => {
+        printf(({level, message, label, timestamp}) => {
             return `${timestamp} [${label}] ${level}: ${message}`;
         })
     ),
@@ -148,7 +148,7 @@ global.mqttClient = mqtt.connect(`mqtt://${config.mqtt.host}`, {
                 }
             }, res => {
                 res.on('data', d => {
-                    global.logger.log('info', 'notification', {message: `${d}`});
+                    global.logger.log('info', {message: `${d}`, label: 'notification'});
                     // process.stdout.write(d);
                 });
             });
