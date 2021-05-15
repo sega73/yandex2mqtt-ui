@@ -29,8 +29,8 @@ global.logger = createLogger({
     format: combine(
         label(),
         timestamp(),
-        printf(({level, message, label, timestamp}) => {
-            return `${timestamp} [${label}] ${level}: ${message}`;
+        printf(({level, message, timestamp}) => {
+            return `${timestamp} ${level}: ${message}`;
         })
     ),
     transports: [
@@ -148,13 +148,13 @@ global.mqttClient = mqtt.connect(`mqtt://${config.mqtt.host}`, {
                 }
             }, res => {
                 res.on('data', d => {
-                    global.logger.log('info', {message: `${d}`, label: 'notification'});
+                    global.logger.log('info', {message: `${d}`});
                     // process.stdout.write(d);
                 });
             });
                 
             req.on('error', error => {
-                global.logger.log('error', 'notification', {message: `${error}`});
+                global.logger.log('error', {message: `${error}`});
             });
             
             let {id, capabilities, properties} = ldevice.getState();
