@@ -2,6 +2,9 @@
 
 const fs = require('fs');
 const path = require('path');
+/* */
+const { createLogger, format, transports } = require('winston');
+const { combine, timestamp, printf } = format;
 /* express and https */
 const ejs = require('ejs');
 const express = require('express');
@@ -20,6 +23,23 @@ const mqtt = require('mqtt');
 const config = require('./config');
 const Device = require('./device');
 
+/* Logging */
+global.logger = createLogger({
+    level: 'info',
+    // format: winston.format.json(),
+    format: combine(
+        timestamp(),
+        printf(({ level, message, timestamp }) => {
+            return `${timestamp} ${level}: ${message}`;
+        })
+    ),
+    transports: [
+        new transports.File({filename: 'yandex2mqtt.log'}),
+        new transports.Console(),
+    ],
+});
+
+/* */
 app.engine('ejs', ejs.__express);
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, './views'));
@@ -126,9 +146,11 @@ global.mqttClient = mqtt.connect(`mqtt://${config.mqtt.host}`, {
                     'Authorization': `OAuth ${oauth_token}`
                 }
             }, res => {
-                console.log(`statusCode: ${res.statusCode}`);
-                
                 res.on('data', d => {
+                    global.logger.log({
+                        level: 'info',
+                        message: `${d}`
+                    });
                     // process.stdout.write(d);
                 });
             });
