@@ -3,8 +3,8 @@
 const fs = require('fs');
 const path = require('path');
 /* */
-const { createLogger, format, transports } = require('winston');
-const { combine, timestamp, printf } = format;
+const {createLogger, format, transports} = require('winston');
+const {combine, timestamp, label, printf} = format;
 /* express and https */
 const ejs = require('ejs');
 const express = require('express');
@@ -26,16 +26,17 @@ const Device = require('./device');
 /* Logging */
 global.logger = createLogger({
     level: 'info',
-    // format: winston.format.json(),
     format: combine(
+        label(),
         timestamp(),
-        printf(({ level, message, timestamp }) => {
-            return `${timestamp} ${level}: ${message}`;
+        printf(({level, message, timestamp, label}) => {
+            return `${timestamp} [${label}] ${level}: ${message}`;
         })
     ),
     transports: [
-        new transports.File({filename: 'yandex2mqtt.log'}),
         new transports.Console(),
+        new transports.File({filename: 'log/info.log'}),
+        new transports.File({filename: 'log/error.log', level: 'error'}),
     ],
 });
 
@@ -147,16 +148,13 @@ global.mqttClient = mqtt.connect(`mqtt://${config.mqtt.host}`, {
                 }
             }, res => {
                 res.on('data', d => {
-                    global.logger.log({
-                        level: 'info',
-                        message: `${d}`
-                    });
+                    global.logger.log('info', 'notification', {message: `${d}`});
                     // process.stdout.write(d);
                 });
             });
                 
             req.on('error', error => {
-                // console.error(error)
+                global.logger.log('error', 'notification', {message: `${error}`});
             });
             
             let {id, capabilities, properties} = ldevice.getState();
