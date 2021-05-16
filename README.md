@@ -11,6 +11,9 @@
 Прочий функционал (изменение громкости, каналов, отключение звука), поидее, так же должны работать.
 
 ## ChangeLog
+###### 16.05.2021
+Добавлено логирование некоторых событий.
+
 ###### 13.05.2021
 Добавлена поддержка API уведомлений об изменении состояний устройств.
 
@@ -59,7 +62,7 @@ npm start
 ```
 
 ## Настройка yandex2mqtt
-Все основные настройки моста прописываются в файл config.js. Перед запуском обязательно отредактируйте его.
+Все основные настройки моста прописываются в файл ~~config.js~~. Перед запуском обязательно отредактируйте его.
 ```
 mv config.orig.js config.js
 ```
@@ -331,6 +334,9 @@ valueMapping: [
 - [Типы умений устройства](https://yandex.ru/dev/dialogs/alice/doc/smart-home/concepts/capability-types.html)
 - [Типы встроенных датчиков](https://yandex.ru/dev/dialogs/alice/doc/smart-home/concepts/properties-types.html)
 
+## Логирование
+
+
 ## Создание службы
 В папке  /etc/systemd/system/ создать файл yandex2mqtt.service со следующим содержанем:
 ```
@@ -339,7 +345,7 @@ Description=yandex2mqtt
 After=network.target
 
 [Service]
-ExecStart=/usr/bin/npm start
+ExecStart=/usr/bin/node app.js
 WorkingDirectory=/opt/yandex2mqtt
 StandardOutput=inherit
 StandardError=inherit
