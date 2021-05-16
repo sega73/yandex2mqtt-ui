@@ -17,7 +17,7 @@ global.dbl = new loki('./loki.json', {
 
 module.exports.find = (key, done) => {
     const ltoken = global.authl.findOne({'token': key});
-    if (ltoken){
+    if (ltoken) {
         const {userId, clientId} = ltoken;
         return done(null, {userId, clientId})
     } else {
