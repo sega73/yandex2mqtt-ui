@@ -37,9 +37,10 @@ global.logger = createLogger({
             return `${timestamp} ${level}: ${message}`;
         })
     ),
-    transports: [new NullTransport()],
+    transports: [],
 });
 
+if (clArgv.length == 0) global.logger.add(NullTransport);
 if (clArgv.indexOf('--log-info') > -1) global.logger.add(new transports.Console());
 if (clArgv.indexOf('--log-error') > -1) global.logger.add(new transports.File({filename: 'log/error.log', level: 'error'}));
 
