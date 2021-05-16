@@ -34,6 +34,7 @@ global.logger = createLogger({
         timestamp(),
         printf((a/* {level, message, timestamp, stack} */) => {
             // return `${timestamp} ${level}: ${message} ${stack}`;
+            console.dir(a, {depth: 9});
             return `${a}`;
         })
     ),
