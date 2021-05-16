@@ -1,3 +1,5 @@
+const {logger} = global;
+
 /* function for convert system values to Yandex (depends of capability or property type) */
 function convertToYandexValue(val, actType) {
     switch(actType) {
@@ -8,7 +10,7 @@ function convertToYandexValue(val, actType) {
                 const value = parseFloat(val);
                 return isNaN(value) ? 0.0 : value;
             } catch(e) {
-                console.error(`Can't parse to float: ${val}`);
+                logger.log('error', {message: `Can't parse to float: ${val}`});
                 return 0.0;
             }
         }
@@ -96,7 +98,7 @@ class Device {
                 }
             }
             default: {
-                console.error(`Unsupported capability type: ${type}`)
+                logger.log('error', {message: `Unsupported capability type: ${type}`});
                 return undefined;
             }
         }
@@ -195,7 +197,7 @@ class Device {
             message = `${value}`;
         } catch(e) {              
             topic = false;
-            global.logger.log('error', {message: `${e}`});
+            logger.log('error', {message: `${e}`});
         }
 
         if (topic) {
@@ -225,7 +227,7 @@ class Device {
             const value = this.getMappedValue(val, actType, false);
             cp.state = {instance, value: convertToYandexValue(value, actType)};
         } catch(e) {
-            global.logger.log('error', {message: `${e}`});
+            logger.log('error', {message: `${e}`});
         }
     }
 }

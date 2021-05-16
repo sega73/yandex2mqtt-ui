@@ -1,10 +1,15 @@
 'use strict';
 
+const {logger} = global;
 const codes = {};
 
 module.exports.find = (key, done) => {
-    if (codes[key]) return done(null, codes[key]);
-    return done(new Error('Code Not Found'));
+    if (codes[key]) {
+        return done(null, codes[key]);
+    } else {
+        logger.log('error', new Error('Code Not Found'));
+        return done();
+    }
 };
 
 module.exports.save = (code, clientId, redirectUri, userId, userName, done) => {
