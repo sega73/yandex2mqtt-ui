@@ -1,5 +1,6 @@
 'use strict';
 
+const {logger, authl} = global;
 const loki = require('lokijs');
 
 global.dbl = new loki('./loki.json', {
@@ -7,46 +8,50 @@ global.dbl = new loki('./loki.json', {
     autosave: true,
     autosaveInterval: 5000,
     autoloadCallback() {
-        global.authl = global.dbl.getCollection('tokens');
-        if (global.authl === null) {
-            global.authl = global.dbl.addCollection('tokens');
+        authl = global.dbl.getCollection('tokens');
+        if (authl === null) {
+            authl = global.dbl.addCollection('tokens');
         }
     }
 });
 
 module.exports.find = (key, done) => {
-    const ltoken = global.authl.findOne({'token': key});
+    const ltoken = authl.findOne({'token': key});
     if (ltoken){
-        console.log('Token found');
         const {userId, clientId} = ltoken;
         return done(null, {userId, clientId})
     } else {
-        return done(new Error('Token Not Found'));
+        logger.log('error', new Error('Token Not Found'));
+        return done();
     }  
 };
 
 module.exports.findByUserIdAndClientId = (userId, clientId, done) => {
-    const ltoken = global.authl.findOne({'userId': userId});
+    const ltoken = authl.findOne({'userId': userId});
     if (ltoken){
-        console.log('Load token by userId: User found');
+        logger.log('info', {message: `Load token by userId (${userId}): User found`});
         const {token, userId: uid, clientId: cid} = ltoken;
-        if (uid === userId && cid === clientId) return done(null, token);
-        else return done(new Error('Token Not Found'));
+        if (uid === userId && cid === clientId) {
+            return done(null, token);
+        } else {
+            logger.log('error', new Error('Token Not Found'));
+            return done();
+        }
     } else {
-        console.log('User not found');
-        return done(new Error('User Not Found'));
+        logger.log('error', new Error('User Not Found'));
+        return done();
     }  
 };
 
 module.exports.save = (token, userId, clientId, done) => {
-    console.log('Start saving token');
-    const ltoken = global.authl.findOne({'userId': userId});
+    logger.log('info', {message: `Start saving token`});
+    const ltoken = authl.findOne({'userId': userId});
     if (ltoken){
-        console.log('User Updated');
-        global.authl.update(Object.assign({}, ltoken, {token, userId, clientId}));
+        logger.log('info', {message: `User Updated`});
+        authl.update(Object.assign({}, ltoken, {token, userId, clientId}));
     } else {
-        console.log('User not Found. Create new...');
-        global.authl.insert({'type': 'token', token, userId, clientId});
+        logger.log('info', {message: `User not Found. Create new...`});
+        authl.insert({'type': 'token', token, userId, clientId});
     }
     done();
 };

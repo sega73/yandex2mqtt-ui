@@ -39,7 +39,7 @@ module.exports.devices = [
             
             res.status(200).send(r);
         } catch (e) {
-            console.error(e);
+            global.logger.log('error', {message: `${e}`});
             res.status(404).send(undefined);
         }
     }

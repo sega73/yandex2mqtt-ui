@@ -2,6 +2,8 @@
 
 const fs = require('fs');
 const path = require('path');
+/* */
+const {createLogger, format, transports} = require('winston');
 /* express and https */
 const ejs = require('ejs');
 const express = require('express');
@@ -20,6 +22,29 @@ const mqtt = require('mqtt');
 const config = require('./config');
 const Device = require('./device');
 
+/* */
+const clArgv = process.argv.slice(2);
+
+/* Logging */
+global.logger = createLogger({
+    level: 'info',
+    format: format.combine(
+        format.errors({stack: true}),
+        format.timestamp(),
+        format.printf(({level, message, timestamp, stack}) => {
+            return `${timestamp} ${level}: ${stack != undefined ? stack : message}`;
+        }),
+    ),
+    transports: [
+        new transports.Console({
+            silent: clArgv.indexOf('--log-info') == -1
+        })
+    ],
+});
+
+if (clArgv.indexOf('--log-error') > -1) global.logger.add(new transports.File({filename: 'log/error.log', level: 'error'}));
+
+/* */
 app.engine('ejs', ejs.__express);
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, './views'));
@@ -110,6 +135,49 @@ global.mqttClient = mqtt.connect(`mqtt://${config.mqtt.host}`, {
     const {deviceId, instance} = subscription;
     const ldevice = global.devices.find(d => d.data.id == deviceId);
     ldevice.updateState(`${message}`, instance);
+
+    /* Make Request to Yandex Dialog notification API */
+    Promise.all(config.notification.map(el => {
+        let {skill_id, oauth_token, user_id} = el;
+
+        return new Promise((resolve, reject) => {
+            let req = https.request({
+                hostname: 'dialogs.yandex.net',
+                port: 443,
+                path: `/api/v1/skills/${skill_id}/callback/state`,
+                method: 'POST',
+                headers: {
+                    'Content-Type': `application/json`,
+                    'Authorization': `OAuth ${oauth_token}`
+                }
+            }, res => {
+                res.on('data', d => {
+                    global.logger.log('info', {message: `${d}`});
+                });
+            });
+                
+            req.on('error', error => {
+                global.logger.log('error', {message: `${error}`});
+            });
+            
+            let {id, capabilities, properties} = ldevice.getState();
+            req.write(JSON.stringify({
+                "ts": Math.floor(Date.now() / 1000),
+                "payload": {
+                    "user_id": `${user_id}`,
+                    "devices": [{
+                        id,
+                        capabilities: capabilities.filter(c => c.state.instance == instance),
+                        properties: properties.filter(p => p.state.instance == instance)
+                    }],
+                }
+            }));
+
+            req.end();
+
+            resolve(true);
+        });
+    }));
 
     /* */
 });
