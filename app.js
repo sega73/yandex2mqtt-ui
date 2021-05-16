@@ -32,8 +32,9 @@ global.logger = createLogger({
     format: combine(
         errors({stack: true}),
         timestamp(),
-        printf(({level, message, timestamp, stack}) => {
-            return `${timestamp} ${level}: ${message} ${stack}`;
+        printf((a/* {level, message, timestamp, stack} */) => {
+            // return `${timestamp} ${level}: ${message} ${stack}`;
+            return `${a}`;
         })
     ),
     transports: [
