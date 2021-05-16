@@ -37,7 +37,7 @@ global.logger = createLogger({
             return `${timestamp} ${level}: ${message}`;
         })
     ),
-    transports: [NullTransport],
+    transports: [new NullTransport()],
 });
 
 if (clArgv.indexOf('--log-info') > -1) global.logger.add(new transports.Console());
