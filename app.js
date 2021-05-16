@@ -5,7 +5,6 @@ const path = require('path');
 /* */
 const {createLogger, format, transports} = require('winston');
 const {combine, timestamp, printf} = format;
-const NullTransport = require('winston-null');
 /* express and https */
 const ejs = require('ejs');
 const express = require('express');
@@ -26,7 +25,6 @@ const Device = require('./device');
 
 /* */
 const clArgv = process.argv.slice(2);
-console.log(clArgv);
 
 /* Logging */
 global.logger = createLogger({
@@ -138,7 +136,7 @@ global.mqttClient = mqtt.connect(`mqtt://${config.mqtt.host}`, {
     const ldevice = global.devices.find(d => d.data.id == deviceId);
     ldevice.updateState(`${message}`, instance);
 
-    /* */
+    /* Make Request to Yandex Dialog notification API */
     Promise.all(config.notification.map(el => {
         let {skill_id, oauth_token, user_id} = el;
 
@@ -155,7 +153,6 @@ global.mqttClient = mqtt.connect(`mqtt://${config.mqtt.host}`, {
             }, res => {
                 res.on('data', d => {
                     global.logger.log('info', {message: `${d}`});
-                    // process.stdout.write(d);
                 });
             });
                 
@@ -183,7 +180,6 @@ global.mqttClient = mqtt.connect(`mqtt://${config.mqtt.host}`, {
     }));
 
     /* */
-
 });
 
 module.exports = app;
