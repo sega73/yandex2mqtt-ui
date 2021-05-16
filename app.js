@@ -5,7 +5,7 @@ const path = require('path');
 /* */
 const {createLogger, format, transports} = require('winston');
 const {combine, timestamp, printf} = format;
-var nullTransport = require('winston-null');
+const {NullTransport: nullTransport} = require('winston-null');
 /* express and https */
 const ejs = require('ejs');
 const express = require('express');
