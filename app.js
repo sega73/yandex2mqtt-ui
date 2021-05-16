@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 /* */
 const {createLogger, format, transports} = require('winston');
-const {combine, timestamp, printf} = format;
+const {combine, timestamp, printf, errors, prettyPrint} = format;
 /* express and https */
 const ejs = require('ejs');
 const express = require('express');
@@ -30,10 +30,12 @@ const clArgv = process.argv.slice(2);
 global.logger = createLogger({
     level: 'info',
     format: combine(
+        errors({stack: true}),
         timestamp(),
-        printf(({level, message, timestamp}) => {
-            return `${timestamp} ${level}: ${message}`;
-        })
+        // printf(({level, message, timestamp}) => {
+        //     return `${timestamp} ${level}: ${message}`;
+        // }),
+        prettyPrint()
     ),
     transports: [
         new transports.Console({
