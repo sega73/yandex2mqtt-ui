@@ -23,6 +23,10 @@ const mqtt = require('mqtt');
 const config = require('./config');
 const Device = require('./device');
 
+/* */
+const clArgv = process.argv.slice(2);
+console.log(clArgv);
+
 /* Logging */
 global.logger = createLogger({
     level: 'info',
@@ -33,12 +37,11 @@ global.logger = createLogger({
             return `${timestamp} ${level}: ${message}`;
         })
     ),
-    transports: [
-        new transports.Console(),
-        new transports.File({filename: 'log/info.log'}),
-        new transports.File({filename: 'log/error.log', level: 'error'}),
-    ],
+    transports: [],
 });
+
+if (clArgv.indexOf('--log-info')) global.logger.add(new transports.Console());
+if (clArgv.indexOf('--log-error')) global.logger.add(new transports.File({filename: 'log/error.log', level: 'error'}));
 
 /* */
 app.engine('ejs', ejs.__express);
