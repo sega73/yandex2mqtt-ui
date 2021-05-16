@@ -335,7 +335,8 @@ valueMapping: [
 - [Типы встроенных датчиков](https://yandex.ru/dev/dialogs/alice/doc/smart-home/concepts/properties-types.html)
 
 ## Логирование
-Добавлено две "стратегии" логирования: логироване сообщений об ощибках в файл `log/errors.log` (аргумент запуска `--log-errors`) и логирование всех сообщений в консоль (`--log-info`).
+Добавлено две "стратегии" логирования: логироване сообщений об ощибках в файл `log/error.log` (аргумент запуска `--log-error`) и логирование всех сообщений в консоль (`--log-info`).
+Для запуска y2m с логирование нужно добавить аргумент запуска в команду запуска в файле настройки служба (**раздел ниже**) или запускать из консоли.
 
 ## Создание службы
 В папке `/etc/systemd/system/` создать файл `yandex2mqtt.service` со следующим содержанем:
@@ -345,7 +346,7 @@ Description=yandex2mqtt
 After=network.target
 
 [Service]
-ExecStart=/usr/bin/node app.js
+ExecStart=/usr/bin/node app.js --log-error
 WorkingDirectory=/opt/yandex2mqtt
 StandardOutput=inherit
 StandardError=inherit
