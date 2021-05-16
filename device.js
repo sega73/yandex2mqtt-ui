@@ -195,7 +195,7 @@ class Device {
             message = `${value}`;
         } catch(e) {              
             topic = false;
-            console.log(e);
+            global.logger.log('error', {message: `${e}`});
         }
 
         if (topic) {
