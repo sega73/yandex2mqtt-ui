@@ -42,7 +42,7 @@ global.logger = createLogger({
     ],
 });
 
-if (clArgv.indexOf('--log-errors') > -1) global.logger.add(new transports.File({filename: 'log/error.log', level: 'error'}));
+if (clArgv.indexOf('--log-errors') > -1) global.logger.add(new transports.File({filename: 'log/errors.log', level: 'error'}));
 
 /* */
 app.engine('ejs', ejs.__express);
