@@ -31,7 +31,6 @@ console.log(clArgv);
 global.logger = createLogger({
     level: 'info',
     format: combine(
-        label(),
         timestamp(),
         printf(({level, message, timestamp}) => {
             return `${timestamp} ${level}: ${message}`;
@@ -40,8 +39,8 @@ global.logger = createLogger({
     transports: [],
 });
 
-if (clArgv.indexOf('--log-info')) global.logger.add(new transports.Console());
-if (clArgv.indexOf('--log-error')) global.logger.add(new transports.File({filename: 'log/error.log', level: 'error'}));
+if (clArgv.indexOf('--log-info') > -1) global.logger.add(new transports.Console());
+if (clArgv.indexOf('--log-error') > -1) global.logger.add(new transports.File({filename: 'log/error.log', level: 'error'}));
 
 /* */
 app.engine('ejs', ejs.__express);
