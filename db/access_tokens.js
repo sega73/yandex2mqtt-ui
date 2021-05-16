@@ -20,7 +20,7 @@ module.exports.find = (key, done) => {
         const {userId, clientId} = ltoken;
         return done(null, {userId, clientId})
     } else {
-        global.logger.log('error', {message: `${new Error('Token Not Found')}`});
+        global.logger.log('error', new Error('Token Not Found'));
         return done();
     }  
 };
