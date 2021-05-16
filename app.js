@@ -34,7 +34,7 @@ global.logger = createLogger({
         timestamp(),
         printf(({level, message, timestamp, stack}) => {
             //console.dir(a, {depth: 9});
-            return `${timestamp} ${level}: ${message} \n ${stack != undefined ? stack : ''}`;
+            return `${timestamp} ${level}: ${stack != undefined ? stack : message}`;
         })
         // prettyPrint()
     ),
