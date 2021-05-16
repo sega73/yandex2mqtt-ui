@@ -225,7 +225,7 @@ class Device {
             const value = this.getMappedValue(val, actType, false);
             cp.state = {instance, value: convertToYandexValue(value, actType)};
         } catch(e) {
-            console.error(e);
+            global.logger.log('error', {message: `${e}`});
         }
     }
 }
