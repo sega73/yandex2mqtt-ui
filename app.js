@@ -5,7 +5,7 @@ const path = require('path');
 /* */
 const {createLogger, format, transports} = require('winston');
 const {combine, timestamp, printf} = format;
-const {NullTransport: nullTransport} = require('winston-null');
+const NullTransport = require('winston-null');
 /* express and https */
 const ejs = require('ejs');
 const express = require('express');
@@ -37,7 +37,7 @@ global.logger = createLogger({
             return `${timestamp} ${level}: ${message}`;
         })
     ),
-    transports: [nullTransport],
+    transports: [NullTransport],
 });
 
 if (clArgv.indexOf('--log-info') > -1) global.logger.add(new transports.Console());
