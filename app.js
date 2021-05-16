@@ -32,10 +32,9 @@ global.logger = createLogger({
     format: combine(
         errors({stack: true}),
         timestamp(),
-        // printf(({level, message, timestamp}) => {
-        //     return `${timestamp} ${level}: ${message}`;
-        // }),
-        prettyPrint()
+        printf(({level, message, timestamp, stack}) => {
+            return `${timestamp} ${level}: ${message} ${stack}`;
+        })
     ),
     transports: [
         new transports.Console({
