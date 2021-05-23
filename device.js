@@ -43,7 +43,7 @@ class Device {
             properties: (options.properties || []).map(p => Object.assign({}, p, {state: (p.state == undefined) ? this.initState(p) : p.state})),
         };
         this.meta = {
-            allowedUsers: options.allowedUsers || [1],
+            allowedUsers: options.allowedUsers || ['1'],
         };
     }
 
