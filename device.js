@@ -1,3 +1,5 @@
+const {logger} = global;
+
 /* function for convert system values to Yandex (depends of capability or property type) */
 function convertToYandexValue(val, actType) {
     switch(actType) {
@@ -8,7 +10,7 @@ function convertToYandexValue(val, actType) {
                 const value = parseFloat(val);
                 return isNaN(value) ? 0.0 : value;
             } catch(e) {
-                console.error(`Can't parse to float: ${val}`);
+                logger.log('error', {message: `Can't parse to float: ${val}`});
                 return 0.0;
             }
         }
@@ -38,11 +40,14 @@ class Device {
                 valueMapping: options.valueMapping || [],
             },
             capabilities: (options.capabilities || []).map(c => Object.assign({}, c, {state: (c.state == undefined) ? this.initState(c) : c.state})),
-            properties: (options.properties || []).map(p => Object.assign({}, p, {state: (p.state == undefined) ? this.initState(p) : p.state}))
-        }
+            properties: (options.properties || []).map(p => Object.assign({}, p, {state: (p.state == undefined) ? this.initState(p) : p.state})),
+        };
+        this.meta = {
+            allowedUsers: options.allowedUsers || ['1'],
+        };
     }
 
-    /*  Create init state on device object create */
+    /*  Create init state (for capabilities and properties) on device object create */
     initState(cp) {
         const {type, parameters} = cp;
         const actType = String(type).split('.')[2];
@@ -60,10 +65,10 @@ class Device {
                     value: false
                 }
             }
-            case 'toggle': {
+            case 'mode': {
                 return {
                     instance: parameters.instance,
-                    value: false
+                    value: parameters.modes[0].value
                 }
             }
             case 'range': {
@@ -72,20 +77,45 @@ class Device {
                     value: parameters.range.min
                 }
             }
-            case 'mode': {
+            case 'toggle': {
                 return {
                     instance: parameters.instance,
-                    value: parameters.modes[0].value
+                    value: false
                 }
             }
             default: {
-                console.error(`Unsupported capability type: ${type}`)
+                logger.log('error', {message: `Unsupported capability type: ${type}`});
                 return undefined;
             }
         }
 
     }
 
+    /* Find capability by type (and instance) */
+    findCapability(type, instance) {
+        const {capabilities} = this.data;
+        if (instance != undefined) {
+            return capabilities.find(c => c.type === type && c.state.instance === instance);
+        } else {
+            return capabilities.find(c => c.type === type);
+        }
+    }
+
+    /* Find property by type (and instance) */
+    findProperty(type, instance) {
+        const {properties} = this.data;
+        if (instance != undefined) {
+            return properties.find(p => p.type === type && p.state.instance === instance);
+        } else {
+            return properties.find(p => p.type === type);
+        }
+    }
+
+    /* Find 'set' topic by instance*/
+    findTopicByInstance(instance) {
+        return this.data.custom_data.mqtt.find(i => i.instance === instance).set;
+    }
+    
     /* Get mapped value (if exist) for capability type */
     /**
      * 
@@ -103,21 +133,6 @@ class Device {
         
         const mappedValue = to[from.indexOf(val)];
         return (mappedValue != undefined) ? mappedValue : val;
-    }
-
-    /* Find capability by type */
-    findCapability(type) {
-        return this.data.capabilities.find(c => c.type === type);
-    }
-
-    /* Unused for now */
-    findProperty(type) {
-        return this.data.properties.find(p => p.type === type);
-    }
-
-    /* Find 'set' topic by instance*/
-    findTopicByInstance(instance) {
-        return this.data.custom_data.mqtt.find(i => i.instance === instance).set;
     }
 
     getInfo() {
@@ -160,7 +175,7 @@ class Device {
         let message;
         let topic;
         try {
-            const capability = this.findCapability(type);
+            const capability = this.findCapability(type, instance);
             if (capability == undefined) throw new Error(`Can't find capability '${type}' in device '${id}'`);
             capability.state.value = value;
             topic = this.findTopicByInstance(instance);
@@ -168,7 +183,7 @@ class Device {
             message = `${value}`;
         } catch(e) {              
             topic = false;
-            console.log(e);
+            logger.log('error', {message: `${e}`});
         }
 
         if (topic) {
@@ -198,7 +213,7 @@ class Device {
             const value = this.getMappedValue(val, actType, false);
             cp.state = {instance, value: convertToYandexValue(value, actType)};
         } catch(e) {
-            console.error(e);
+            logger.log('error', {message: `${e}`});
         }
     }
 }

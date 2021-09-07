@@ -1,17 +1,20 @@
 'use strict';
 
+const {logger} = global;
 const {clients} = require('../config'); 
 
 module.exports.findById = (id, done) => {
     for (const client of clients) {
         if (client.id === id) return done(null, client);
     }
-    return done(new Error('Client Not Found'));
+    logger.log('error', new Error('Client Not Found'));
+    return done();
 };
 
 module.exports.findByClientId = (clientId, done) => {
     for (const client of clients) {
         if (client.clientId === clientId) return done(null, client);
     }
-    return done(new Error('Client Not Found'));
+    logger.log('error', new Error('Client Not Found'));
+    return done();
 };

@@ -1,5 +1,6 @@
 'use strict';
 
+const {logger} = global;
 const loki = require('lokijs');
 
 global.dbl = new loki('./loki.json', {
@@ -16,36 +17,40 @@ global.dbl = new loki('./loki.json', {
 
 module.exports.find = (key, done) => {
     const ltoken = global.authl.findOne({'token': key});
-    if (ltoken){
-        console.log('Token found');
+    if (ltoken) {
         const {userId, clientId} = ltoken;
         return done(null, {userId, clientId})
     } else {
-        return done(new Error('Token Not Found'));
+        logger.log('error', new Error('Token Not Found'));
+        return done();
     }  
 };
 
 module.exports.findByUserIdAndClientId = (userId, clientId, done) => {
     const ltoken = global.authl.findOne({'userId': userId});
     if (ltoken){
-        console.log('Load token by userId: User found');
+        logger.log('info', {message: `Load token by userId (${userId}): User found`});
         const {token, userId: uid, clientId: cid} = ltoken;
-        if (uid === userId && cid === clientId) return done(null, token);
-        else return done(new Error('Token Not Found'));
+        if (uid === userId && cid === clientId) {
+            return done(null, token);
+        } else {
+            logger.log('error', new Error('Token Not Found'));
+            return done();
+        }
     } else {
-        console.log('User not found');
-        return done(new Error('User Not Found'));
+        logger.log('error', new Error('User Not Found'));
+        return done();
     }  
 };
 
 module.exports.save = (token, userId, clientId, done) => {
-    console.log('Start saving token');
+    logger.log('info', {message: `Start saving token`});
     const ltoken = global.authl.findOne({'userId': userId});
     if (ltoken){
-        console.log('User Updated');
+        logger.log('info', {message: `User Updated`});
         global.authl.update(Object.assign({}, ltoken, {token, userId, clientId}));
     } else {
-        console.log('User not Found. Create new...');
+        logger.log('info', {message: `User not Found. Create new...`});
         global.authl.insert({'type': 'token', token, userId, clientId});
     }
     done();

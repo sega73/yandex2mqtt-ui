@@ -20,20 +20,28 @@ module.exports.ping = [
 module.exports.devices = [
     passport.authenticate('bearer', {session: true}),
     (req, res) => {
-        const reqId = req.get('X-Request-Id');
-        const r = {
-            request_id: reqId,
-            payload: {
-                user_id: "1",
-                devices: []
-            }
-        };
+        const [reqId, authToken] = [req.get('X-Request-Id'), req.get('Authorization').split(' ')[1]];
 
-        for (const d of global.devices) {
-            r.payload.devices.push(d.getInfo());
-        };
-        
-        res.status(200).send(r);
+        try {
+            const {userId} = global.authl.findOne({'token': authToken});
+
+            const r = {
+                request_id: reqId,
+                payload: {
+                    user_id: userId,
+                    devices: []
+                }
+            };
+
+            for (const d of global.devices.filter(d => Array.isArray(d.meta.allowedUsers) && d.meta.allowedUsers.indexOf(userId) > -1)) {
+                r.payload.devices.push(d.getInfo());
+            };
+            
+            res.status(200).send(r);
+        } catch (e) {
+            global.logger.log('error', {message: `${e}`});
+            res.status(404).send(undefined);
+        }
     }
 ];
 
