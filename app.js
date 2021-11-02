@@ -20,6 +20,7 @@ const passport = require('passport');
 const mqtt = require('mqtt');
 /* */
 const config = require('./config');
+config.notification= config.notification||[];
 const Device = require('./device');
 
 /* */
