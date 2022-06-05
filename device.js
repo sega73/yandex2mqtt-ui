@@ -83,6 +83,12 @@ class Device {
                     value: false
                 }
             }
+            case 'event': {
+                return {
+                    instance: parameters.instance,
+                    value: undefined
+                }
+            }
             default: {
                 logger.log('error', {message: `Unsupported capability type: ${type}`});
                 return undefined;
