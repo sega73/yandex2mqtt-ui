@@ -281,6 +281,40 @@ devices: [
             },
         ],
     },
+    {
+        id: 'haw-001-motion',
+        name: 'Движение',
+        room: 'Коридор',
+        type: 'devices.types.sensor',
+        allowedUsers: ['2'],
+        mqtt: [
+            {
+                instance: 'motion',
+                state: '/yandex/sensors/HaW_001_Motion/motion',
+            },
+        ],
+        valueMapping: [
+            {
+                type: 'event',
+                mapping: [['not_detected', 'detected'], ['false', 'true']], // [yandex, mqtt]
+            },
+        ],
+        properties: [
+            {
+                type: 'devices.properties.event',
+                retrievable: true,
+                parameters: {
+                    instance: 'motion',
+                    events: [{
+                        value: 'detected'
+                    },
+                    {
+                        value: 'not_detected'
+                    }]
+                },
+            },
+        ],
+    },
     /* --- end */
 ],
 ```
