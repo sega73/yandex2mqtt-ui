@@ -303,6 +303,7 @@ devices: [
             {
                 type: 'devices.properties.event',
                 retrievable: true,
+                reportable: true,
                 parameters: {
                     instance: 'motion',
                     events: [{
