@@ -83,7 +83,7 @@ module.exports.action = [
             const ldevice = global.devices.find(device => device.data.id == id);
 
             for (const pdc of payloadDevice.capabilities) {
-                capabilities.push(ldevice.setCapabilityState(pdc.state.value , pdc.type, pdc.state.instance));
+                capabilities.push(ldevice.setCapabilityState(pdc.state.value, pdc.type, pdc.state.instance));
             }
             
             r.payload.devices.push({id, capabilities});
