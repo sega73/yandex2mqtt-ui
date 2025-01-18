@@ -102,6 +102,9 @@ module.exports = {
                     state: '/yandex/sensors/LvR_001_Weather/humidity',
                 },
             ],
+            jsonPath: {
+                temperature: "MAX31865-0.Temperature",
+            },
             properties: [
                 {
                     type: 'devices.properties.float',

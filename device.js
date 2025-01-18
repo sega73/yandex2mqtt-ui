@@ -38,6 +38,7 @@ class Device {
             custom_data: {
                 mqtt: options.mqtt || [],
                 valueMapping: options.valueMapping || [],
+                jsonPath: options.jsonPath || {},
             },
             capabilities: (options.capabilities || []).map(c => Object.assign({}, c, {state: (c.state == undefined) ? this.initState(c) : c.state})),
             properties: (options.properties || []).map(p => Object.assign({}, p, {state: (p.state == undefined) ? this.initState(p) : p.state})),
@@ -141,6 +142,19 @@ class Device {
         return (mappedValue != undefined) ? mappedValue : val;
     }
 
+    getJsonValue(obj, instance) {
+        const path = this.data.custom_data.jsonPath[instance].split('.');
+        for(let [idx,prop] of path.entries()) {
+            if(idx==0) obj = JSON.parse(obj);
+            if(!obj)
+                return '';
+            obj = obj[prop];
+            if(!obj)
+                return '';
+        }
+        return obj;
+    }
+
     getInfo() {
         const {id, name, description, room, type, capabilities, properties} = this.data;
         return {id, name, description, room, type, capabilities, properties};
@@ -216,7 +230,8 @@ class Device {
             if (cp == undefined) throw new Error(`Can't instance '${instance}' in device '${id}'`);
 
             const actType = String(cp.type).split('.')[2];
-            const value = this.getMappedValue(val, actType, false);
+            const value2 = this.getMappedValue(val, actType, false);
+            const value = this.getJsonValue(value2, instance);
             cp.state = {instance, value: convertToYandexValue(value, actType)};
         } catch(e) {
             logger.log('error', {message: `${e}`});

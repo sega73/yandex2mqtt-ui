@@ -93,13 +93,13 @@ app.post('/provider/v1.0/user/devices/action', r_user.action);
 app.post('/provider/v1.0/user/unlink', r_user.unlink);
 
 /* create https server */
-const privateKey = fs.readFileSync(config.https.privateKey, 'utf8');
-const certificate = fs.readFileSync(config.https.certificate, 'utf8');
-const credentials = {
-    key: privateKey,
-    cert: certificate,
-};
-const httpsServer = https.createServer(credentials, app);
+const use_tls = (config.https.privateKey !="" && config.https.certificate !="");
+const {privateKey, certificate, https} = {
+    https: use_tls ? require('https') : require('http'),
+    privateKey : use_tls ? fs.readFileSync(config.https.privateKey, 'utf8') : "",
+    certificate : use_tls ? fs.readFileSync(config.https.certificate, 'utf8') : "",
+    };
+const httpsServer = use_tls ? https.createServer(credentials, app) : https.createServer(app);
 httpsServer.listen(config.https.port);
 
 /* cache devices from config to global */
