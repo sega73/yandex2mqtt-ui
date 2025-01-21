@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1600, initial-scale=1.0">
+    <title>Main</title>
+    <link rel="stylesheet" href="/css/bulma.min.css">
+    <script>
+        function getCokie(cname) {
+            let name = cname + "=";
+            let cookie = decodeURIComponent(document.cookie);
+            let ca = cookie.split(';');
+            for (let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+        }
+    </script>
+    <script type="module">
+        import { createApp } from '/script/petite-vue.es.js'
+        function App() {
+            //console.log(getCokie("active_sheet"));
+            const prev_act_sh = getCokie("active_sheet");
+            let app_ret = {
+                menu_ent: [{ name: 'main', active: true }, { name: 'devices', active: false }, { name: 'users', active: false }],
+                cur_active: 0,
+                sel_men_ent(id) {
+                    this.menu_ent[this.cur_active].active = false;
+                    this.menu_ent[this.cur_active = id].active = true;
+                    document.cookie = "active_sheet=" + id + ";max-age=" + 60 * 60 + ";SameSite=Lax";
+                }
+            }
+            app_ret.sel_men_ent(prev_act_sh ? prev_act_sh : 0)
+            return app_ret;
+        }
+        function DeviceManage() {
+            return {
+                creating_dev: false,
+                switch_new_dev_window() {
+                    this.creating_dev = !this.creating_dev;
+                },
+                dev_ls: [{ name: 'Device1', type: 'Temp.Sensor', users: ['admin', 'user1'], edit: false },
+                { name: 'Device2', type: '', users: [], edit: false },
+                { name: 'Device3', type: 'relay', users: ['user2'], edit: false }]
+            }
+        }
+        function Device(dev_data) {
+            return {
+                $template: '#dev-data-row',
+                dev_data
+                // name:_dev_data.name,
+                // type:_dev_data.type,
+                // users:_dev_data.users,
+                // edit_mode:false
+            }
+        }
+        createApp({ App, Device, DeviceManage }).mount()
+    </script>
+    <template id="dev-data-row">
+        <td>{{dev_data.name}}</td>
+        <td>{{dev_data.type}}</td>
+        <td>
+            <div class="tags">
+                <span class="tag" v-for="user of dev_data.users">{{user}}</span>
+            </div>
+        </td>
+        <td>
+            <div class="buttons has-addons are-small">
+                <button class="button" :class="{'is-primary':dev_data.edit}" @click="dev_data.edit=!dev_data.edit">edit</button>
+                <button class="button is-danger is-light is-outlined">delete</button>
+            </div>
+        </td>
+
+
+    </template>
+</head>
+
+<body>
+    <div class="container is-fullhd is-flex" v-scope="App()">
+        <aside class="menu">
+            <ul class="menu-list">
+                <li v-for="(entry, idx) of menu_ent" @click="sel_men_ent(idx)">
+                    <a :class="{'is-active':entry.active}">{{entry.name}}</a>
+                </li>
+            </ul>
+        </aside>
+        <div class="container" id="view">
+            <section :class="{hide:!menu_ent[1].active}" class="section" id="devices" v-scope="DeviceManage()">
+                <h1 class="title">Devices</h1>
+                <table class="table is-hoverable">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th>Users</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template v-for="dev of dev_ls" :key="dev.name">
+                            <tr v-scope="Device(dev)"></tr>
+                            <tr>
+                                <td v-if="dev.edit" colspan="4">
+                                    <div class="field">
+                                        <label class="label">Name</label>
+                                        <div class="control">
+                                            <input type="text" class="input">
+                                        </div>
+                                    </div>
+                                    <div class="field">
+                                        <label class="label">Type</label>
+                                        <div class="control">
+                                            <div class="select">
+                                                <select>
+                                                    <option>sensor</option>
+                                                    <option>relay</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+                <%- include('dev_modal') %>                
+                <button class="button" @click="switch_new_dev_window()">Add device</button>
+            </section>
+            <section :class="{hide:!menu_ent[2].active}" class="section">
+                <h1 class="title">Users</h1>
+            </section>
+        </div>
+
+    </div>
+</body>
+
+</html>
+
+<style>
+    .hide {
+        display: none;
+    }
+</style>

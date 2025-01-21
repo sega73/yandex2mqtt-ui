@@ -1,0 +1,80 @@
+<script type="module">
+    import { createApp } from '/script/petite-vue.es.js'
+</script>
+<section class="modal" :class="{'is-active':creating_dev}">
+    <div class="modal-background" @click="switch_new_dev_window()"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Add new device</p>
+            <button class="delete" aria-label="close" @click="switch_new_dev_window()"></button>
+        </header>
+        <section class="modal-card-body">
+            <div class="field">
+                <label class="label">Name</label>
+                <div class="control"><input type="text" class="input" placeHolder="Device name"></div>
+            </div>
+            <div class="field">
+                <label class="label">Type</label>
+                <div class="control">
+                    <div class="select">
+                        <select>
+                            <option>sensor</option>
+                            <option>relay</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Users</label>
+                <div class="control"><input type="text" class="input" placeHolder="Username"></div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <p class="card-header-title">Parameters</p>
+                </div>
+                <div class="card-content">
+                    <table class="table is-fullwidth is-striped is-narrow is-hoverable is-size-7">
+                        <thead>
+                            <th>Name</th>
+                            <th>Value</th>
+                            <th>Type</th>
+                            <th>Alias</th>
+                            <th>Address</th>
+                            <th>Map</th>
+                            <th>JsonPath</th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Temperature</td>
+                                <td>23.1</td>
+                                <td>Property</td>
+                                <td>float</td>
+                                <td>mqtt/topic/value</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Humidity</td>
+                                <td>56</td>
+                                <td>Property</td>
+                                <td>float</td>
+                                <td>mqtt/topic/value2</td>
+                                <td></td>
+                                <td>Sensor.humidity</td>
+                            </tr>
+                            <tr>
+                                <td>State</td>
+                                <td>1</td>
+                                <td>Property</td>
+                                <td>on_off</td>
+                                <td><input type="text" class="input is-small" value="mqtt/topic/state"></td>
+                                <td>on,off->1,0</td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </div>
+</section>
