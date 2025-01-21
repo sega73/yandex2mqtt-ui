@@ -61,7 +61,28 @@
                 // edit_mode:false
             }
         }
-        createApp({ App, Device, DeviceManage }).mount()
+        function UserManage() {
+            async function get_users() {
+                const res = await fetch(`/api/get_users`, {
+                    headers: {
+                        "Authorization": "Bearer test-token",
+                    }
+                })
+                const answer = await res.json()
+                if(answer.error) {
+                    console.log(answer)
+                }
+                else {
+                    this.user_ls = answer;
+                }                
+            }
+            // get_users();
+            return {
+                user_ls: [],
+                get_users:get_users,
+            }
+        }
+        createApp({ App, Device, DeviceManage, UserManage}).mount()
     </script>
     <template id="dev-data-row">
         <td>{{dev_data.name}}</td>
@@ -81,7 +102,21 @@
 
     </template>
 </head>
-
+<style>
+    .dot {
+        background-color: green;
+        border-radius: 50%;
+        width: 0.5rem;
+        height: 0.5rem;
+        display: inline-block;
+    }
+    .y2m-hr {
+        width:20rem;
+        height:0.5rem; 
+        border-radius: 0.25rem;
+        background-color:var(--bulma-link);
+    }
+</style>
 <body>
     <div class="container is-fullhd is-flex" v-scope="App()">
         <aside class="menu">
@@ -92,15 +127,25 @@
             </ul>
         </aside>
         <div class="container" id="view">
+            <section class="section" :class="{hide:!menu_ent[0].active}">
+                <h1 class="title hero">System View</h1>
+                <hr class="y2m-hr">
+                <div class="columns">
+                    <div class="column"><div class="box ">yandex2mqtt: <div class="dot mr-1"></div>running</div></div>
+                    <div class="column"><div class="box ">mqtt-broker: <div class="dot mr-1"></div>connected</div></div>
+                </div>
+                
+            </section>
             <section :class="{hide:!menu_ent[1].active}" class="section" id="devices" v-scope="DeviceManage()">
                 <h1 class="title">Devices</h1>
-                <table class="table is-hoverable">
+                <hr class="y2m-hr">
+                <table class="table is-hoverable is-fullwidth">
                     <thead>
                         <tr>
                             <th>Name</th>
                             <th>Type</th>
                             <th>Users</th>
-                            <th></th>
+                            <th style="width:15%"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -133,8 +178,39 @@
                 <%- include('dev_modal') %>                
                 <button class="button" @click="switch_new_dev_window()">Add device</button>
             </section>
-            <section :class="{hide:!menu_ent[2].active}" class="section">
-                <h1 class="title">Users</h1>
+            <section :class="{hide:!menu_ent[2].active}" class="section" v-scope="UserManage()">
+                <h1 class="title hero">Users</h1>
+                <hr class="y2m-hr">
+                <table class="table is-fullwidth" @mounted="get_users()">
+                    <thead>
+                        <tr>
+                            <th>Login</th>
+                            <th>Name</th>
+                            <th style="width:15%"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="user of user_ls">
+                            <td>
+                                <input v-if="user.edit" type="text" class="input is-small" :size="user.login.length"
+                                    v-model="user.login">
+                                <span v-else>{{user.login}}</span>
+                            </td>
+                            <td>
+                                <span v-if="user.edit"><input type="text" class="input is-small"
+                                        :size="user.name.length" v-model="user.name"></span>
+                                <span v-else>{{user.name}}</span>
+                            </td>
+                            <td>
+                                <div class="buttons has-addons are-small">
+                                    <button class="button" @click="user.edit=!user.edit"
+                                        :class="{'is-primary':user.edit}">edit</button>
+                                    <button class="button is-danger is-light is-outlined">delete</button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </section>
         </div>
 
