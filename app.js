@@ -8,7 +8,7 @@ const {createLogger, format, transports} = require('winston');
 const ejs = require('ejs');
 const express = require('express');
 const app = express();
-const https = require('https');
+//const https = require('https');
 /* parsers */
 const cookieParser = require('cookie-parser');
 /* error handler */
@@ -101,6 +101,7 @@ const {privateKey, certificate, https} = {
     };
 const httpsServer = use_tls ? https.createServer(credentials, app) : https.createServer(app);
 httpsServer.listen(config.https.port);
+const https_cli = use_tls ? https : require('https');
 
 /* cache devices from config to global */
 global.devices = [];
@@ -143,7 +144,7 @@ global.mqttClient = mqtt.connect(`mqtt://${config.mqtt.host}`, {
         let {skill_id, oauth_token, user_id} = el;
 
         return new Promise((resolve, reject) => {
-            let req = https.request({
+            let req = https_cli.request({
                 hostname: 'dialogs.yandex.net',
                 port: 443,
                 path: `/api/v1/skills/${skill_id}/callback/state`,
